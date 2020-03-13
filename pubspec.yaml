@@ -1,0 +1,12 @@
+name: dexeca
+version: 0.0.0-semantically-released
+homepage: https://github.com/brad-jones/dexeca
+description: A dartlang port of https://github.com/sindresorhus/execa
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dev_dependencies:
+  drun: ^1.0.11
+  test: ^1.14.1
+  pedantic: ^1.8.0

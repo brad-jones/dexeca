@@ -1,0 +1,106 @@
+import 'dart:io';
+import 'dart:async';
+import 'dart:convert';
+import 'package:drun/drun.dart';
+import 'package:dexeca/dexeca.dart';
+import 'package:path/path.dart' as p;
+
+Future<void> main(argv) async => drun(argv);
+
+/// Updates the version of the Dart SDK that this repo uses.
+Future<void> updateDartSdk([String nextVersion]) async {
+  var dartVersionFile = File(p.absolute('.dart-version'));
+  var currentVersion = await dartVersionFile.readAsString();
+  await Future.wait([
+    _searchReplaceFile(
+      dartVersionFile,
+      currentVersion,
+      nextVersion,
+    ),
+    _searchReplaceFile(
+      File(p.absolute('.github/workflows/main.yml')),
+      currentVersion,
+      nextVersion,
+    ),
+  ]);
+}
+
+/// Gets things ready to perform a release.
+///
+/// * [nextVersion] Should be a valid semver version number string.
+///   see: https://semver.org
+///
+///   This version number will be used to replace the `0.0.0-semantically-released`
+///   placeholder in the files `./pubspec.yaml`, `./bin/drun.dart` &
+///   `./lib/src/executor.dart`.
+///
+/// * [assetsDir] Files in this location will be uploaded to the new Github Release
+Future<void> releasePrepare(
+  String nextVersion, [
+  String assetsDir = './github-assets',
+]) async {
+  await _searchReplaceVersion(File(p.absolute('pubspec.yaml')), nextVersion);
+}
+
+/// Actually publishes the package to https://pub.dev.
+///
+/// Beaware that `pub publish` does not really support being used inside a CI
+/// pipeline yet. What this does is uses someone's local OAUTH creds which is a
+/// bit hacky.
+///
+/// see: https://github.com/dart-lang/pub/issues/2227
+/// also: https://medium.com/evenbit/publishing-dart-packages-with-github-actions-5240068a2f7d
+///
+/// * [nextVersion] Should be a valid semver version number string.
+///   see: https://semver.org
+///
+/// * [dryRun] If supplied then nothing will actually get published.
+///
+/// * [accessToken] Get this from your local `credentials.json` file.
+///
+/// * [refreshToken] Get this from your local `credentials.json` file.
+Future<void> releasePublish(
+  String nextVersion,
+  bool dryRun, [
+  @Env('PUB_OAUTH_ACCESS_TOKEN') String accessToken,
+  @Env('PUB_OAUTH_REFRESH_TOKEN') String refreshToken,
+]) async {
+  if (dryRun) {
+    await dexeca('pub', ['publish', '--dry-run']);
+    return;
+  }
+
+  if (accessToken.isEmpty || refreshToken.isEmpty) {
+    throw 'accessToken & refreshToken must be supplied!';
+  }
+
+  // on windows the path is actually %%UserProfile%%\AppData\Roaming\Pub\Cache
+  // not that this really matters because we only intend on running this inside
+  // a pipeline which will be running linux.
+  var credsFilePath = p.join(_homeDir(), '.pub-cache', 'credentials.json');
+
+  await File(credsFilePath).writeAsString(jsonEncode({
+    'accessToken': '${accessToken}',
+    'refreshToken': '${refreshToken}',
+    'tokenEndpoint': 'https://accounts.google.com/o/oauth2/token',
+    'scopes': ['openid', 'https://www.googleapis.com/auth/userinfo.email'],
+    'expiration': 1583826705770,
+  }));
+
+  await dexeca('pub', ['publish', '--force']);
+}
+
+String _homeDir() {
+  if (Platform.isWindows) return Platform.environment['UserProfile'];
+  return Platform.environment['HOME'];
+}
+
+Future<void> _searchReplaceFile(File file, String from, String to) async {
+  var src = await file.readAsString();
+  var newSrc = src.replaceAll(from, to);
+  await file.writeAsString(newSrc);
+}
+
+Future<void> _searchReplaceVersion(File file, String nextVersion) {
+  return _searchReplaceFile(file, '0.0.0-semantically-released', nextVersion);
+}
