@@ -26,6 +26,7 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
           restore-keys: ${{ runner.os }}-
       - run: pub get
+      - run: apt-get update && apt-get install iputils-ping
       - run: pub run test
 
   release:
