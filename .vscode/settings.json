@@ -24,11 +24,20 @@
 	// see: https://marketplace.visualstudio.com/items?itemName=streetsidesoftware.code-spell-checker
 	"cSpell.words": [
 		"Builtins",
+		"OAUTH",
+		"commitlint",
+		"dartfmt",
 		"dartlang",
 		"dexeca",
 		"drun",
+		"iputils",
+		"noninteractive",
 		"octokit",
 		"onwarn",
+		"pnpm",
+		"pnpx",
+		"pubspec",
+		"rpms",
 		"treeshake",
 		"tslib"
 	]
