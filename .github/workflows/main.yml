@@ -26,7 +26,9 @@ jobs:
           key: ${{ runner.os }}-${{ hashFiles('**/pubspec.lock') }}
           restore-keys: ${{ runner.os }}-
       - run: pub get
-      - run: apt-get update && apt-get install iputils-ping
+      - run: apt-get update && apt-get -yq install iputils-ping
+        env:
+          DEBIAN_FRONTEND: noninteractive
       - run: pub run test
 
   release:
