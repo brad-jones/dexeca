@@ -1,7 +1,7 @@
 name: dexeca
 version: 0.0.0-semantically-released
 homepage: https://github.com/brad-jones/dexeca
-description: A dartlang port of https://github.com/sindresorhus/execa
+description: A dartlang child process executor inspired by https://github.com/sindresorhus/execa
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
