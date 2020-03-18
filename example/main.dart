@@ -1,12 +1,11 @@
+import 'dart:io';
 import 'dart:async';
 import 'dart:convert';
-import 'dart:io' as io;
-import 'dart:io';
 import 'package:dexeca/dexeca.dart';
 
 /// Just a helper so that this example will execute as expected everywhere.
 List<String> _pingArgs(String target) {
-  if (io.Platform.isWindows) {
+  if (Platform.isWindows) {
     return [target];
   } else {
     return ['-c', '4', target];
