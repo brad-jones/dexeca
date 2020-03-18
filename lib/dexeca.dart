@@ -4,6 +4,9 @@ import 'package:dexeca/src/process.dart';
 export 'package:dexeca/src/process.dart';
 export 'package:dexeca/src/process_result.dart';
 
+/// This function will return an object which looks like a normal
+/// `dart:io.Process` object as well as being awaitable, where the awaited
+/// result looks like `dart:io.ProcessResult`.
 Process dexeca(
   String exe,
   List<String> args, {
