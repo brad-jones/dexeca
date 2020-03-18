@@ -59,35 +59,61 @@ Future<void> releasePrepare(
 /// * [accessToken] Get this from your local `credentials.json` file.
 ///
 /// * [refreshToken] Get this from your local `credentials.json` file.
+///
+/// * [oAuthExpiration] Get this from your local `credentials.json` file.
 Future<void> releasePublish(
   String nextVersion,
   bool dryRun, [
-  @Env('PUB_OAUTH_ACCESS_TOKEN') String accessToken,
-  @Env('PUB_OAUTH_REFRESH_TOKEN') String refreshToken,
+  @Env('PUB_OAUTH_ACCESS_TOKEN') String accessToken = '',
+  @Env('PUB_OAUTH_REFRESH_TOKEN') String refreshToken = '',
+  @Env('PUB_OAUTH_EXPIRATION') int oAuthExpiration = 0,
 ]) async {
-  if (dryRun) {
-    await dexeca('pub', ['publish', '--dry-run']);
-    return;
+  String tmpDir;
+  var gitIgnore = File(p.absolute('.gitignore'));
+
+  try {
+    // Copy our custom .pubignore rules into .gitignore
+    // see: https://github.com/dart-lang/pub/issues/2222
+    tmpDir = (await Directory.systemTemp.createTemp('dexecve')).path;
+    var pubIgnoreRulesFuture = File(p.absolute('.pubignore')).readAsString();
+    await gitIgnore.copy(p.join(tmpDir, '.gitignore'));
+    await gitIgnore.writeAsString(
+      '\n${(await pubIgnoreRulesFuture)}',
+      mode: FileMode.append,
+    );
+
+    if (dryRun) {
+      await dexeca('pub', ['publish', '--dry-run'],
+          runInShell: Platform.isWindows);
+      return;
+    }
+
+    if (accessToken.isEmpty || refreshToken.isEmpty) {
+      throw 'accessToken & refreshToken must be supplied!';
+    }
+
+    // on windows the path is actually %%UserProfile%%\AppData\Roaming\Pub\Cache
+    // not that this really matters because we only intend on running this inside
+    // a pipeline which will be running linux.
+    var credsFilePath = p.join(_homeDir(), '.pub-cache', 'credentials.json');
+
+    await File(credsFilePath).writeAsString(jsonEncode({
+      'accessToken': '${accessToken}',
+      'refreshToken': '${refreshToken}',
+      'tokenEndpoint': 'https://accounts.google.com/o/oauth2/token',
+      'scopes': ['openid', 'https://www.googleapis.com/auth/userinfo.email'],
+      'expiration': oAuthExpiration,
+    }));
+
+    await dexeca('pub', ['publish', '--force'], runInShell: Platform.isWindows);
+  } finally {
+    if (tmpDir != null) {
+      if (await File(p.join(tmpDir, '.gitignore')).exists()) {
+        await File(p.join(tmpDir, '.gitignore')).copy(gitIgnore.path);
+      }
+      await Directory(tmpDir).delete(recursive: true);
+    }
   }
-
-  if (accessToken.isEmpty || refreshToken.isEmpty) {
-    throw 'accessToken & refreshToken must be supplied!';
-  }
-
-  // on windows the path is actually %%UserProfile%%\AppData\Roaming\Pub\Cache
-  // not that this really matters because we only intend on running this inside
-  // a pipeline which will be running linux.
-  var credsFilePath = p.join(_homeDir(), '.pub-cache', 'credentials.json');
-
-  await File(credsFilePath).writeAsString(jsonEncode({
-    'accessToken': '${accessToken}',
-    'refreshToken': '${refreshToken}',
-    'tokenEndpoint': 'https://accounts.google.com/o/oauth2/token',
-    'scopes': ['openid', 'https://www.googleapis.com/auth/userinfo.email'],
-    'expiration': 1583826705770,
-  }));
-
-  await dexeca('pub', ['publish', '--force']);
 }
 
 String _homeDir() {
