@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io' as io;
 import 'package:dexeca/src/process_result.dart';
+import 'package:dexeca/src/process_result_exception.dart';
 
 typedef _ProcessFutureFactory = Future<ProcessResult> Function();
 
@@ -115,20 +116,7 @@ class Process implements io.Process, Future<ProcessResult> {
       }
 
       var exitCode = await _proc.exitCode;
-      if (exitCode != 0) {
-        throw ProcessResult(
-          io.ProcessResult(
-            _proc.pid,
-            exitCode,
-            stdoutBuffer.toString(),
-            stderrBuffer.toString(),
-          ),
-          combinedBuffer.toString(),
-          _killed,
-        );
-      }
-
-      return ProcessResult(
+      var result = ProcessResult(
         io.ProcessResult(
           _proc.pid,
           exitCode,
@@ -138,6 +126,12 @@ class Process implements io.Process, Future<ProcessResult> {
         combinedBuffer.toString(),
         _killed,
       );
+
+      if (exitCode != 0) {
+        throw ProcessResultException(result);
+      }
+
+      return result;
     };
   }
 }
