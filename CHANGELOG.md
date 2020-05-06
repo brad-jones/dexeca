@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/brad-jones/dexeca/compare/v1.0.1...v1.1.0) (2020-05-06)
+
+
+### Features
+
+* **exception:** throw an actual exception for better error messages ([3de86bb](https://github.com/brad-jones/dexeca/commit/3de86bbecae0a2d0fea4be8363a4e6136aea7105))
+
 ## [1.0.1](https://github.com/brad-jones/dexeca/compare/v1.0.0...v1.0.1) (2020-03-18)
 
 
