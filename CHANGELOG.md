@@ -1,3 +1,15 @@
+# [1.2.0](https://github.com/brad-jones/dexeca/compare/v1.1.0...v1.2.0) (2020-05-07)
+
+
+### Bug Fixes
+
+* **process:** trim trailing whitespace the same as execa ([1256f06](https://github.com/brad-jones/dexeca/commit/1256f06787c9f1012bc79388eac7828d5f97fb6c))
+
+
+### Features
+
+* **lookpath:** added a "which/where" like function ([6f83b6f](https://github.com/brad-jones/dexeca/commit/6f83b6f9260e5a4c8991ce01912f88f8ae6a4aee))
+
 # [1.1.0](https://github.com/brad-jones/dexeca/compare/v1.0.1...v1.1.0) (2020-05-06)
 
 
