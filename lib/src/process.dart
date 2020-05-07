@@ -120,10 +120,10 @@ class Process implements io.Process, Future<ProcessResult> {
         io.ProcessResult(
           _proc.pid,
           exitCode,
-          stdoutBuffer.toString(),
-          stderrBuffer.toString(),
+          stdoutBuffer.toString().trimRight(),
+          stderrBuffer.toString().trimRight(),
         ),
-        combinedBuffer.toString(),
+        combinedBuffer.toString().trimRight(),
         _killed,
       );
 
