@@ -7,24 +7,6 @@ import 'package:path/path.dart' as p;
 
 Future<void> main(argv) async => drun(argv);
 
-/// Updates the version of the Dart SDK that this repo uses.
-Future<void> updateDartSdk([String nextVersion]) async {
-  var dartVersionFile = File(p.absolute('.dart-version'));
-  var currentVersion = await dartVersionFile.readAsString();
-  await Future.wait([
-    _searchReplaceFile(
-      dartVersionFile,
-      currentVersion,
-      nextVersion,
-    ),
-    _searchReplaceFile(
-      File(p.absolute('.github/workflows/main.yml')),
-      currentVersion,
-      nextVersion,
-    ),
-  ]);
-}
-
 /// Gets things ready to perform a release.
 ///
 /// * [nextVersion] Should be a valid semver version number string.
@@ -121,12 +103,11 @@ String _homeDir() {
   return Platform.environment['HOME'];
 }
 
-Future<void> _searchReplaceFile(File file, String from, String to) async {
+Future<void> _searchReplaceVersion(File file, String nextVersion) async {
   var src = await file.readAsString();
-  var newSrc = src.replaceAll(from, to);
+  var newSrc = src.replaceAll(
+    RegExp(r'version: ".*"'),
+    'version: "${nextVersion}"',
+  );
   await file.writeAsString(newSrc);
-}
-
-Future<void> _searchReplaceVersion(File file, String nextVersion) {
-  return _searchReplaceFile(file, '0.0.0-semantically-released', nextVersion);
 }
