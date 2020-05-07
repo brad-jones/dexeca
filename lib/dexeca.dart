@@ -1,5 +1,6 @@
 import 'dart:cli';
 import 'dart:io' as io;
+import 'package:dexeca/look_path.dart';
 import 'package:dexeca/src/process.dart';
 export 'package:dexeca/src/process.dart';
 export 'package:dexeca/src/process_result.dart';
@@ -17,8 +18,19 @@ Process dexeca(
   bool combineOutput = false,
   bool includeParentEnvironment = true,
   bool runInShell = false,
+  bool winHashBang = true,
   io.ProcessStartMode mode = io.ProcessStartMode.normal,
 }) {
+  if (!runInShell) {
+    var executable = lookPath(exe, winHashBang: winHashBang);
+    if (executable.runner?.isNotEmpty ?? false) {
+      args.insert(0, executable.file);
+      exe = executable.runner;
+    } else {
+      exe = executable.file;
+    }
+  }
+
   return Process(
     waitFor(io.Process.start(
       exe,
