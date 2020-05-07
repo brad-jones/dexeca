@@ -6,6 +6,9 @@ description: A dartlang child process executor inspired by https://github.com/si
 environment:
   sdk: ">=2.7.0 <3.0.0"
 
+dependencies:
+  path: ^1.7.0
+
 dev_dependencies:
   drun: ^1.0.11
   test: ^1.14.1
