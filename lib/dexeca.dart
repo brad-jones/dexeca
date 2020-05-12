@@ -31,6 +31,11 @@ Process dexeca(
     }
   }
 
+  if (mode == io.ProcessStartMode.inheritStdio) {
+    inheritStdio = false;
+    captureOutput = false;
+  }
+
   return Process(
     waitFor(io.Process.start(
       exe,
