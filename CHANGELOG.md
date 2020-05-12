@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/brad-jones/dexeca/compare/v1.2.0...v1.2.1) (2020-05-12)
+
+
+### Bug Fixes
+
+* **stdio:** processstartmode.inheritstdio incompat with inheritstdio ([1f08f17](https://github.com/brad-jones/dexeca/commit/1f08f17c1745a37f5149f49a1590c5ed5bbca962))
+
 # [1.2.0](https://github.com/brad-jones/dexeca/compare/v1.1.0...v1.2.0) (2020-05-07)
 
 
