@@ -4,6 +4,7 @@ import 'package:dexeca/look_path.dart';
 import 'package:dexeca/src/process.dart';
 export 'package:dexeca/src/process.dart';
 export 'package:dexeca/src/process_result.dart';
+import 'package:dexeca/src/process_result_exception.dart';
 
 /// This function will return an object which looks like a normal
 /// `dart:io.Process` object as well as being awaitable, where the awaited
