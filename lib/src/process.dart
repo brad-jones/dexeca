@@ -66,6 +66,7 @@ class Process implements io.Process, Future<ProcessResult> {
     bool inheritStdio,
     bool captureOutput,
     bool combineOutput,
+    String prefix = '',
   }) {
     _futureFactory = () async {
       var combinedBuffer = StringBuffer();
@@ -78,7 +79,7 @@ class Process implements io.Process, Future<ProcessResult> {
             try {
               await for (var line
                   in stdout.transform(utf8.decoder).transform(LineSplitter())) {
-                if (inheritStdio) io.stdout.writeln(line);
+                if (inheritStdio) io.stdout.writeln('${prefix}${line}');
                 if (captureOutput) {
                   if (combineOutput) {
                     combinedBuffer.writeln(line);
@@ -97,7 +98,7 @@ class Process implements io.Process, Future<ProcessResult> {
             try {
               await for (var line
                   in stderr.transform(utf8.decoder).transform(LineSplitter())) {
-                if (inheritStdio) io.stderr.writeln(line);
+                if (inheritStdio) io.stderr.writeln('${prefix}${line}');
                 if (captureOutput) {
                   if (combineOutput) {
                     combinedBuffer.writeln(line);

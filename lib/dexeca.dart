@@ -11,6 +11,8 @@ export 'package:dexeca/src/process_result.dart';
 Process dexeca(
   String exe,
   List<String> args, {
+  String prefix,
+  String prefixSeperator = ' | ',
   String workingDirectory,
   Map<String, String> environment,
   bool inheritStdio = true,
@@ -49,5 +51,6 @@ Process dexeca(
     captureOutput: captureOutput,
     combineOutput: combineOutput,
     inheritStdio: inheritStdio,
+    prefix: prefix == null ? '' : '${prefix}${prefixSeperator}',
   );
 }

@@ -81,7 +81,7 @@ Future<void> main(List<String> args) async {
 
   // Run many commands at once with interleaved output
   await Future.wait([
-    dexeca('ping', _pingArgs('www.facebook.com')),
-    dexeca('ping', _pingArgs('www.google.com')),
+    dexeca('ping', _pingArgs('www.facebook.com'), prefix: 'facebook'),
+    dexeca('ping', _pingArgs('www.google.com'), prefix: 'google'),
   ]);
 }
