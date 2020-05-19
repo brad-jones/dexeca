@@ -1,3 +1,15 @@
+# [1.3.0](https://github.com/brad-jones/dexeca/compare/v1.2.1...v1.3.0) (2020-05-19)
+
+
+### Bug Fixes
+
+* **exception:** export the process result exception ([15a41e3](https://github.com/brad-jones/dexeca/commit/15a41e3707101541860520624613d1dc1ac4de2e))
+
+
+### Features
+
+* **prefix:** allow output to be prefixed with a custom string ([75f0da3](https://github.com/brad-jones/dexeca/commit/75f0da3924a723c526818d057a8e63b09002b616))
+
 ## [1.2.1](https://github.com/brad-jones/dexeca/compare/v1.2.0...v1.2.1) (2020-05-12)
 
 
